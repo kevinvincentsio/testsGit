@@ -1,0 +1,4 @@
+# Rien de généré à committer pour l'extension pour l'instant.
+node_modules/
+*.log
+.DS_Store

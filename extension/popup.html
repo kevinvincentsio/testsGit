@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Panier Malin</h1>
+      <button id="options" class="link" title="Réglages">⚙︎</button>
+    </header>
+
+    <p class="hint">
+      Va sur la page <strong>panier</strong> de ton drive (connecté), puis lance
+      l'optimisation. Le bot prépare le panier ; tu vérifies et tu commandes.
+    </p>
+
+    <button id="run" class="primary">Optimiser mon panier</button>
+
+    <div id="status" class="status" hidden></div>
+
+    <section id="summary" hidden>
+      <h2 id="sum-title"></h2>
+      <p id="sum-notes" class="notes"></p>
+      <h3>Articles</h3>
+      <ul id="sum-items" class="items"></ul>
+      <h3 id="recipes-h" hidden>Idées recettes</h3>
+      <ul id="sum-recipes" class="recipes"></ul>
+      <details>
+        <summary>Détail des actions</summary>
+        <ul id="sum-log" class="log"></ul>
+      </details>
+    </section>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

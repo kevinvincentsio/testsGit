@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Panier Malin — assistant de courses drive",
+  "version": "0.1.0",
+  "description": "Optimise ton panier de drive à la demande : promos, produits de saison, recettes et tes goûts. Tu cliques, tu vérifies, tu commandes.",
+  "permissions": ["storage", "activeTab", "scripting", "notifications"],
+  "host_permissions": [
+    "https://api.anthropic.com/*",
+    "https://www.chronodrive.com/*",
+    "https://*.chronodrive.com/*",
+    "https://www.intermarche.com/*",
+    "https://*.intermarche.com/*",
+    "https://www.leclercdrive.fr/*",
+    "https://*.leclercdrive.fr/*"
+  ],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "icons": { "16": "icons/icon16.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Panier Malin",
+    "default_icon": { "16": "icons/icon16.png", "48": "icons/icon48.png", "128": "icons/icon128.png" }
+  },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.chronodrive.com/*",
+        "https://www.intermarche.com/*",
+        "https://www.leclercdrive.fr/*"
+      ],
+      "js": ["content/stores/base.js", "content/stores/chronodrive.js", "content/stores/intermarche.js", "content/stores/leclerc.js", "content/content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

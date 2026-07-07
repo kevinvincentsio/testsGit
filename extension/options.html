@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="popup.css" />
+    <style>
+      body { width: auto; max-width: 640px; margin: 0 auto; }
+      label { display: block; margin: 10px 0 3px; font-weight: 600; font-size: 13px; }
+      input, textarea, select {
+        width: 100%; padding: 8px; border-radius: 7px;
+        border: 1px solid var(--border); background: var(--bg); color: var(--fg);
+        font: inherit;
+      }
+      .row { display: flex; gap: 12px; }
+      .row > div { flex: 1; }
+      .small { color: var(--muted); font-size: 12px; font-weight: 400; margin: 2px 0 0; }
+      fieldset { border: 1px solid var(--border); border-radius: 9px; margin: 16px 0; padding: 12px 14px; }
+      legend { font-weight: 600; padding: 0 6px; }
+      #saved { color: var(--accent); font-size: 13px; margin-left: 10px; }
+    </style>
+  </head>
+  <body>
+    <h1>Réglages — Panier Malin</h1>
+
+    <fieldset>
+      <legend>Intelligence (API Claude)</legend>
+      <label for="apiKey">Clé API Anthropic</label>
+      <input id="apiKey" type="password" placeholder="sk-ant-..." autocomplete="off" />
+      <p class="small">
+        Stockée uniquement dans ce navigateur. Nécessaire pour le raisonnement du
+        bot. Obtenir une clé : console.anthropic.com. Coût : quelques centimes par passage.
+      </p>
+      <div class="row">
+        <div>
+          <label for="model">Modèle</label>
+          <select id="model">
+            <option value="claude-opus-4-8">Claude Opus 4.8 (meilleur raisonnement)</option>
+            <option value="claude-sonnet-5">Claude Sonnet 5 (bon, moins cher)</option>
+            <option value="claude-haiku-4-5">Claude Haiku 4.5 (rapide, basique)</option>
+          </select>
+        </div>
+        <div>
+          <label for="effort">Effort de réflexion</label>
+          <select id="effort">
+            <option value="low">Faible</option>
+            <option value="medium">Moyen</option>
+            <option value="high">Élevé</option>
+          </select>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Ton foyer</legend>
+      <div class="row">
+        <div>
+          <label for="householdSize">Nombre de personnes</label>
+          <input id="householdSize" type="number" min="1" value="2" />
+        </div>
+        <div>
+          <label for="coverDays">Jours à couvrir</label>
+          <input id="coverDays" type="number" min="1" value="4" />
+        </div>
+        <div>
+          <label for="weeklyBudget">Budget (€, optionnel)</label>
+          <input id="weeklyBudget" type="number" min="0" placeholder="—" />
+        </div>
+      </div>
+      <label for="diet">Régime</label>
+      <input id="diet" placeholder="ex. végétarien, sans porc… (laisser vide si aucun)" />
+      <label for="allergies">Allergies (séparées par des virgules)</label>
+      <input id="allergies" placeholder="ex. arachide, gluten" />
+      <label for="dislikes">Aversions (séparées par des virgules)</label>
+      <input id="dislikes" placeholder="ex. coriandre, foie" />
+      <label for="staples">Indispensables toujours au frigo (virgules)</label>
+      <input id="staples" placeholder="ex. lait, œufs, beurre, café" />
+    </fieldset>
+
+    <fieldset>
+      <legend>Profil de goûts appris (modifiable)</legend>
+      <p class="small">
+        Le bot enrichit ce texte à chaque passage à partir de ce que tu ajoutes ou
+        retires du panier. Tu peux le corriger à la main : il fait foi.
+      </p>
+      <textarea id="profileFreeText" rows="6" placeholder="(se remplit automatiquement)"></textarea>
+    </fieldset>
+
+    <button id="save" class="primary" style="width:auto;padding:10px 20px;">Enregistrer</button>
+    <span id="saved" hidden>Enregistré ✓</span>
+
+    <script src="options.js"></script>
+  </body>
+</html>
