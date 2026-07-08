@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fr">
+  <!-- Page fixture imitant une page panier de drive (sélecteurs Chronodrive). -->
+  <head><meta charset="utf-8" /><title>Mon panier — Drive fixture</title></head>
+  <body>
+    <input type="search" name="q" placeholder="Rechercher un produit" />
+
+    <ul id="basket">
+      <li class="cart-item" data-product-id="P100">
+        <span class="cart-item__name">Lait demi-écrémé 1L</span>
+        <input class="quantity" value="6" />
+        <button class="cart-item__remove">Supprimer</button>
+      </li>
+      <li class="cart-item" data-product-id="P200">
+        <span class="cart-item__name">Œufs plein air x12</span>
+        <input class="quantity" value="1" />
+        <button class="cart-item__remove">Supprimer</button>
+      </li>
+    </ul>
+
+    <div id="promos">
+      <article class="product-card" data-product-id="PR1">
+        <span class="product-card__name">Courge butternut</span>
+        <span class="product-card__price">1,49 €</span>
+        <span class="product-card__promo">-30%</span>
+        <button class="add-to-cart">Ajouter</button>
+      </article>
+      <article class="product-card" data-product-id="PR2">
+        <span class="product-card__name">Comté AOP 250g</span>
+        <span class="product-card__price">4,90 €</span>
+        <button class="add-to-cart">Ajouter</button>
+      </article>
+    </div>
+  </body>
+</html>

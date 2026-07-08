@@ -71,6 +71,17 @@
       }
     }
 
+    // Identifiant produit d'un élément : attribut sur l'élément lui-même,
+    // sinon sur un descendant qui le porte.
+    idOf(el) {
+      const attr = this.c.itemIdAttr;
+      return (
+        el.getAttribute(attr) ||
+        q(el, `[${attr}]`)?.getAttribute(attr) ||
+        null
+      );
+    }
+
     // Lit le panier réel : [{product_id, name, quantity}]
     async readCart() {
       await this.acceptCookies();
@@ -79,7 +90,7 @@
       return rows.map((row) => {
         const nameEl = q(row, s.cartItemName);
         const qtyEl = q(row, s.cartItemQty);
-        const id = row.getAttribute(s.itemIdAttr) || q(row, s.cartItemId)?.getAttribute(s.itemIdAttr) || nameEl?.textContent?.trim();
+        const id = this.idOf(row) || nameEl?.textContent?.trim();
         return {
           product_id: (id || "").toString().trim(),
           name: (nameEl?.textContent || "").trim(),
@@ -97,7 +108,7 @@
         const priceEl = q(card, s.productPrice);
         const promoEl = q(card, s.productPromo);
         return {
-          product_id: (card.getAttribute(s.itemIdAttr) || "").toString().trim() || null,
+          product_id: this.idOf(card),
           name: (nameEl?.textContent || "").trim(),
           price: parsePrice(priceEl?.textContent),
           promo_label: (promoEl?.textContent || "").trim() || null,
@@ -120,7 +131,7 @@
       await sleep(800);
       const cards = qa(document, s.productCard).slice(0, limit);
       return cards.map((card) => ({
-        product_id: (card.getAttribute(s.itemIdAttr) || "").toString().trim() || null,
+        product_id: this.idOf(card),
         name: (q(card, s.productName)?.textContent || "").trim(),
         price: parsePrice(q(card, s.productPrice)?.textContent),
         promo_label: (q(card, s.productPromo)?.textContent || "").trim() || null,
@@ -141,11 +152,44 @@
       return true;
     }
 
+    // Diagnostic : pour chaque groupe de sélecteurs, combien d'éléments la
+    // page courante fournit. Sert à valider/ajuster la config d'une enseigne.
+    diagnose() {
+      const s = this.c.selectors;
+      const count = (sel) => qa(document, sel).length;
+      const found = (sel) => (q(document, sel) ? 1 : 0);
+      return {
+        store: this.name,
+        url: location.href,
+        blocked: this.isBlocked(),
+        checks: {
+          searchInput: found(s.searchInput),
+          productCard: count(s.productCard),
+          productName: count(s.productName),
+          productPrice: count(s.productPrice),
+          productAddButton: count(s.productAddButton),
+          cartItem: count(s.cartItem),
+          cartItemName: count(s.cartItemName),
+          cartItemQty: count(s.cartItemQty),
+          cartItemRemove: count(s.cartItemRemove),
+        },
+        sampleCart: qa(document, s.cartItem).slice(0, 3).map((row) => ({
+          id: row.getAttribute(this.c.itemIdAttr) || null,
+          name: (q(row, s.cartItemName)?.textContent || "").trim().slice(0, 60),
+        })),
+        sampleProducts: qa(document, s.productCard).slice(0, 3).map((card) => ({
+          id: card.getAttribute(this.c.itemIdAttr) || null,
+          name: (q(card, s.productName)?.textContent || "").trim().slice(0, 60),
+          price: parsePrice(q(card, s.productPrice)?.textContent),
+        })),
+      };
+    }
+
     async removeFromCart(productId) {
       const s = this.c.selectors;
       const rows = qa(document, s.cartItem);
       for (const row of rows) {
-        const id = row.getAttribute(s.itemIdAttr) || q(row, s.cartItemId)?.getAttribute(s.itemIdAttr);
+        const id = this.idOf(row);
         if ((id || "").toString().trim() === productId) {
           const rm = q(row, s.cartItemRemove);
           if (rm) {

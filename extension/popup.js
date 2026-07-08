@@ -67,6 +67,56 @@ $("run").addEventListener("click", () => {
   });
 });
 
+$("diagnose").addEventListener("click", async () => {
+  $("diag").hidden = true;
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab) return setStatus("Aucun onglet actif.", true);
+  chrome.tabs.sendMessage(tab.id, { action: "diagnose" }, (resp) => {
+    if (chrome.runtime.lastError || !resp) {
+      return setStatus(
+        "Cette page n'est pas un drive pris en charge (ou recharge la page après installation de l'extension).",
+        true
+      );
+    }
+    if (resp.error) return setStatus(resp.error, true);
+    renderDiagnosis(resp);
+  });
+});
+
+function renderDiagnosis(d) {
+  $("status").hidden = true;
+  $("diag").hidden = false;
+  $("diag-head").textContent =
+    `${cap(d.store)} — ${d.blocked ? "⚠️ page de blocage anti-bot détectée" : "page accessible"}`;
+  const ul = $("diag-checks");
+  ul.innerHTML = "";
+  const labels = {
+    searchInput: "Champ de recherche",
+    productCard: "Cartes produit",
+    productName: "Noms de produit",
+    productPrice: "Prix",
+    productAddButton: "Boutons « Ajouter »",
+    cartItem: "Lignes du panier",
+    cartItemName: "Noms (panier)",
+    cartItemQty: "Quantités (panier)",
+    cartItemRemove: "Boutons « Supprimer »",
+  };
+  for (const [key, label] of Object.entries(labels)) {
+    const n = d.checks[key] ?? 0;
+    const li = document.createElement("li");
+    li.textContent = `${n > 0 ? "✓" : "✗"} ${label} : ${n} trouvé(s)`;
+    ul.appendChild(li);
+  }
+  for (const [title, sample] of [["Panier", d.sampleCart], ["Produits", d.sampleProducts]]) {
+    if (sample && sample.length) {
+      const li = document.createElement("li");
+      li.textContent = `→ ${title} (extrait) : ` +
+        sample.map((s) => `${s.name || "?"}${s.price != null ? ` (${s.price} €)` : ""}${s.id ? ` [${s.id}]` : ""}`).join(" ; ");
+      ul.appendChild(li);
+    }
+  }
+}
+
 // Messages émis par le background (utile si le popup reste ouvert).
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.action === "runDone") {

@@ -45,6 +45,18 @@ button.primary {
   cursor: pointer;
 }
 button.primary:disabled { opacity: 0.6; cursor: progress; }
+button.secondary {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--card);
+  color: var(--fg);
+  font-size: 13px;
+  cursor: pointer;
+}
+code { background: var(--card); padding: 1px 4px; border-radius: 4px; font-size: 12px; }
 .status {
   margin-top: 12px;
   padding: 9px 11px;

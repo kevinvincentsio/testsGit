@@ -17,8 +17,19 @@
     </p>
 
     <button id="run" class="primary">Optimiser mon panier</button>
+    <button id="diagnose" class="secondary">Tester la page (diagnostic sélecteurs)</button>
 
     <div id="status" class="status" hidden></div>
+
+    <section id="diag" hidden>
+      <h2>Diagnostic de la page</h2>
+      <p id="diag-head" class="notes"></p>
+      <ul id="diag-checks" class="log"></ul>
+      <p class="hint">
+        Un ✗ signifie que le sélecteur de ce groupe ne trouve rien sur cette page :
+        ajuste la config de l'enseigne dans <code>content/stores/</code> (voir README).
+      </p>
+    </section>
 
     <section id="summary" hidden>
       <h2 id="sum-title"></h2>

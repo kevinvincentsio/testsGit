@@ -115,6 +115,8 @@
           sendResponse(await handleApply(adapter, config, msg.plan, msg.lastBotItems));
         } else if (msg.action === "ping") {
           sendResponse({ ok: true, store: config.name, blocked: adapter.isBlocked() });
+        } else if (msg.action === "diagnose") {
+          sendResponse(adapter.diagnose());
         } else {
           sendResponse({ error: "Action inconnue : " + msg.action });
         }

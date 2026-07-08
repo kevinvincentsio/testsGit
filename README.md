@@ -65,9 +65,13 @@ Les sites de drive changent souvent leur HTML. Les sélecteurs CSS de chaque
 enseigne (`extension/content/stores/chronodrive.js`, `intermarche.js`,
 `leclerc.js`) sont des **points de départ à valider** sur le site réel :
 
-- ouvre le site, clic droit → **Inspecter** sur le champ de recherche, une carte
-  produit, le bouton « Ajouter », une ligne du panier ;
-- ajuste les sélecteurs correspondants dans la config de l'enseigne.
+- sur la page du drive, clique l'extension → **« Tester la page (diagnostic
+  sélecteurs) »** : chaque groupe de sélecteurs affiche ✓/✗ avec le nombre
+  d'éléments trouvés et un extrait de ce qui est lu — tu vois immédiatement
+  lequel ajuster ;
+- pour corriger : clic droit → **Inspecter** sur l'élément concerné (champ de
+  recherche, carte produit, bouton « Ajouter », ligne du panier), puis ajuste le
+  sélecteur correspondant dans la config de l'enseigne.
 
 Le moteur générique (`content/stores/base.js`) ne change pas ; seule la config
 par enseigne évolue. Chronodrive est l'enseigne pré-câblée en priorité.
@@ -91,6 +95,17 @@ extension/
         ├── chronodrive.js  # config Chronodrive (prioritaire)
         ├── intermarche.js  # config Intermarché
         └── leclerc.js      # config Leclerc Drive
+```
+
+## Tests
+
+Le moteur d'adaptateur (lecture panier/promos, suppression, diagnostic,
+détection anti-bot, tolérance aux sélecteurs invalides) est testé contre une
+page fixture :
+
+```sh
+npm install --no-save jsdom
+node tests/adapter.test.mjs
 ```
 
 ## Sécurité & confidentialité
