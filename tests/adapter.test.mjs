@@ -87,4 +87,40 @@ weirdConfig.selectors.cartItemName = [":::invalid:::", ".cart-item__name"];
 const weirdCart = await new weirdDom.window.PanierMalin.GenericAdapter(weirdConfig).readCart();
 assert.equal(weirdCart[0].name, "Lait demi-écrémé 1L", "sélecteur invalide ignoré sans casser");
 
-console.log("✓ 8 groupes d'assertions passés — moteur d'adaptateur OK");
+// 9. Heuristiques de secours : carte avec classes inconnues (cas Chronodrive
+//    réel — les cartes matchent mais rien à l'intérieur).
+const heuristicFixture = `<!doctype html><html><head><title>Rayon</title></head><body>
+  <input type="search" name="q" />
+  <article class="product-card" data-product-id="H1">
+    <a href="/p/h1"><img alt="Yaourt nature x8" src="y.jpg" /></a>
+    <div class="xyz-obscure-1">Bio</div>
+    <div class="xyz-obscure-2">2,15 €</div>
+    <div class="xyz-remise">-25%</div>
+    <button aria-label="Ajouter au panier">+</button>
+  </article>
+</body></html>`;
+const hDom = loadDom(heuristicFixture, "https://www.chronodrive.com/rayon");
+const hPM = hDom.window.PanierMalin;
+const hConfig = hPM.detect();
+// Simule des sélecteurs internes qui ne matchent pas (comme sur le vrai site).
+hConfig.selectors.productName = [".does-not-exist"];
+hConfig.selectors.productPrice = [".does-not-exist"];
+hConfig.selectors.productPromo = [".does-not-exist"];
+hConfig.selectors.productAddButton = [".does-not-exist"];
+const hAdapter = new hPM.GenericAdapter(hConfig);
+const hPromos = plain(await hAdapter.readPromos());
+assert.equal(hPromos.length, 1, "carte extraite malgré les sélecteurs KO");
+assert.equal(hPromos[0].name, "Yaourt nature x8", "nom via alt d'image");
+assert.equal(hPromos[0].price, 2.15, "prix via motif '2,15 €'");
+assert.equal(hPromos[0].promo_label, "-25%", "promo via classe *remise*");
+assert.equal(hPromos[0].product_id, "H1");
+
+// 10. Le diagnostic reflète l'extraction réelle (heuristiques incluses)
+const hDiag = plain(hAdapter.diagnose());
+assert.equal(hDiag.matchedCardSelector, ".product-card", "sélecteur de carte identifié");
+assert.equal(hDiag.checks.productName, 0, "sélecteur nom KO signalé");
+assert.equal(hDiag.sampleProducts[0].name, "Yaourt nature x8", "mais extraction OK");
+assert.equal(hDiag.sampleProducts[0].addButton, true, "bouton Ajouter trouvé par libellé");
+assert.ok(hDiag.firstCardHTML.includes("data-product-id=\"H1\""), "HTML de carte exposé");
+
+console.log("✓ 10 groupes d'assertions passés — moteur d'adaptateur OK");

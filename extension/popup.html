@@ -25,9 +25,15 @@
       <h2>Diagnostic de la page</h2>
       <p id="diag-head" class="notes"></p>
       <ul id="diag-checks" class="log"></ul>
+      <details id="diag-html-wrap" hidden>
+        <summary>HTML de la première carte produit (à copier pour affiner les sélecteurs)</summary>
+        <textarea id="diag-html" rows="8" readonly style="width:100%;font-size:11px;"></textarea>
+        <button id="diag-copy" class="secondary">Copier le diagnostic complet</button>
+      </details>
       <p class="hint">
-        Un ✗ signifie que le sélecteur de ce groupe ne trouve rien sur cette page :
-        ajuste la config de l'enseigne dans <code>content/stores/</code> (voir README).
+        Un ✗ signifie que le sélecteur configuré ne trouve rien — mais une
+        heuristique de secours peut compenser (voir l'extrait « Produits »).
+        Pour affiner : copie le diagnostic complet et transmets-le.
       </p>
     </section>
 

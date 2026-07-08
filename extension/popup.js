@@ -87,7 +87,8 @@ function renderDiagnosis(d) {
   $("status").hidden = true;
   $("diag").hidden = false;
   $("diag-head").textContent =
-    `${cap(d.store)} — ${d.blocked ? "⚠️ page de blocage anti-bot détectée" : "page accessible"}`;
+    `${cap(d.store)} — ${d.blocked ? "⚠️ page de blocage anti-bot détectée" : "page accessible"}` +
+    (d.matchedCardSelector ? ` — cartes via ${d.matchedCardSelector}` : "");
   const ul = $("diag-checks");
   ul.innerHTML = "";
   const labels = {
@@ -110,10 +111,23 @@ function renderDiagnosis(d) {
   for (const [title, sample] of [["Panier", d.sampleCart], ["Produits", d.sampleProducts]]) {
     if (sample && sample.length) {
       const li = document.createElement("li");
-      li.textContent = `→ ${title} (extrait) : ` +
-        sample.map((s) => `${s.name || "?"}${s.price != null ? ` (${s.price} €)` : ""}${s.id ? ` [${s.id}]` : ""}`).join(" ; ");
+      li.textContent = `→ ${title} (extraction réelle, heuristiques incluses) : ` +
+        sample.map((s) =>
+          `${s.name || "?"}${s.price != null ? ` (${s.price} €)` : ""}` +
+          `${s.promo ? ` [${s.promo}]` : ""}${s.addButton === false ? " ⚠︎ pas de bouton Ajouter" : ""}`
+        ).join(" ; ");
       ul.appendChild(li);
     }
+  }
+  const wrap = $("diag-html-wrap");
+  wrap.hidden = !d.firstCardHTML;
+  if (d.firstCardHTML) {
+    $("diag-html").value = d.firstCardHTML;
+    $("diag-copy").onclick = () => {
+      navigator.clipboard.writeText(JSON.stringify(d, null, 2));
+      $("diag-copy").textContent = "Copié ✓";
+      setTimeout(() => ($("diag-copy").textContent = "Copier le diagnostic complet"), 1500);
+    };
   }
 }
 
